@@ -1,14 +1,3 @@
-"""
-discovery.py
-Responsável: Gustavo (Descoberta e gerenciamento de peers)
-
-Implementa a descoberta de nós na rede local via UDP broadcast.
-Quando um nó sobe, ele anuncia sua presença (HELLO) e escuta por
-anúncios de outros nós, além de responder com HELLO_ACK.
-
-Depende de: protocol.py (mensagens), peers.py (armazenar quem foi encontrado)
-"""
-
 import socket
 import threading
 
@@ -57,10 +46,9 @@ def listen_for_discovery(node_id, tcp_port, peer_manager, discovery_port=DISCOVE
             peer_manager.add_or_update_peer(sender_id, ip_origem, msg["tcp_port"])
             print(f"[discovery] Novo peer descoberto: {sender_id} ({ip_origem}:{msg['tcp_port']})")
 
-            # Responde via unicast para quem mandou o HELLO
             ack = protocol.build_hello_ack(node_id, tcp_port)
             ack_payload = protocol.encode_message(ack)
-            sock.sendto(ack_payload, (ip_origem, addr[1]))
+            sock.sendto(ack_payload, (ip_origem, discovery_port))
 
         elif msg_type == protocol.HELLO_ACK:
             sender_id = msg["node_id"]

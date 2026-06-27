@@ -4,11 +4,6 @@ Responsável: Gustavo (Descoberta e gerenciamento de peers)
 
 Mantém a lista de nós conhecidos na rede, junto com informações
 de "última vez visto" (para detectar quedas via heartbeat/PING).
-
-Este módulo é consultado por:
-- discovery.py (adiciona peers quando descobertos)
-- server.py (consulta peers para saber para quem enviar FILE_DATA)
-- sync.py (idem)
 """
 
 import time
@@ -19,15 +14,6 @@ import protocol
 
 
 class PeerManager:
-    """
-    Estrutura de um peer (dict):
-    {
-        "node_id": str,
-        "ip": str,
-        "tcp_port": int,
-        "last_seen": float (timestamp),
-    }
-    """
 
     def __init__(self, peer_timeout=30):
         self._peers = {}  # node_id -> dict com info do peer
@@ -61,13 +47,6 @@ class PeerManager:
             return self._peers.get(node_id)
 
     def remove_stale_peers(self):
-        """
-        Remove peers cujo last_seen não é atualizado há mais de
-        self.peer_timeout segundos (ou seja, pararam de responder
-        ao heartbeat - ver start_heartbeat_loop). Chamado periodicamente
-        por start_cleanup_loop. Retorna lista de node_ids removidos,
-        útil para logging/relatório.
-        """
         now = time.time()
         removed = []
         with self._lock:
@@ -78,11 +57,6 @@ class PeerManager:
         return removed
 
     def start_cleanup_loop(self, interval=5):
-        """
-        Roda em thread separada (daemon=True), chamada a partir do node.py.
-        Faz a limpeza periódica de peers mortos (baseado no last_seen,
-        que é atualizado pelo heartbeat em start_heartbeat_loop).
-        """
         def loop():
             while True:
                 time.sleep(interval)
@@ -95,16 +69,6 @@ class PeerManager:
         return t
 
     def start_heartbeat_loop(self, node_id, interval=10, timeout=3):
-        """
-        Heartbeat ativo: a cada `interval` segundos, manda um PING via TCP
-        para cada peer conhecido. Se o PONG voltar, atualiza o last_seen
-        (mantém o peer "vivo"). Se a conexão falhar ou der timeout, não faz
-        nada aqui - quem efetivamente remove o peer é remove_stale_peers,
-        baseado no last_seen que parou de ser atualizado.
-
-        Import de protocol é feito aqui dentro (não no topo do módulo)
-        para evitar qualquer risco de import circular com server.py.
-        """
         def ping_one_peer(peer):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(timeout)
