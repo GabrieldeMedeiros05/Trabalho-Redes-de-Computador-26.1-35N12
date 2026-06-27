@@ -1,15 +1,4 @@
-"""
-server.py
-Responsável: PESSOA 2 (Comunicação TCP e protocolo de mensagens)
 
-NOTA: esta é uma versão REDUZIDA, contendo apenas o mínimo necessário
-para peers.py e discovery.py funcionarem (servidor TCP escutando +
-resposta a PING/PONG, usados pelo heartbeat). As partes de FILE_LIST,
-FILE_REQUEST, FILE_DATA e FILE_DELETED foram removidas daqui e serão
-implementadas pela Pessoa 2 quando ela começar essa parte do trabalho.
-
-Depende de: protocol.py (mensagens/framing)
-"""
 
 import socket
 import threading

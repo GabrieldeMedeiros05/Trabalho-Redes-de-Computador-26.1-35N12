@@ -1,23 +1,3 @@
-"""
-node.py
-Responsável: PESSOA 4 (Integração, transferência de arquivos e testes)
-
-NOTA: esta é uma versão REDUZIDA, contendo apenas o mínimo necessário
-para testar peers.py e discovery.py isoladamente: sobe o gerenciador
-de peers (com heartbeat e limpeza), o servidor TCP (necessário para
-responder PING) e a descoberta via UDP broadcast.
-
-As partes de sincronização de arquivos (sync.py) e propagação de
-mudanças foram removidas daqui e serão adicionadas de volta pela
-Pessoa 4 durante a integração completa do projeto.
-
-Uso:
-    python node.py <node_id> <tcp_port> [pasta_compartilhada]
-
-Exemplo (rodando 2 nós na mesma máquina para teste, em terminais diferentes):
-    python node.py node1 6001 ./shared1
-    python node.py node2 6002 ./shared2
-"""
 
 import sys
 import time

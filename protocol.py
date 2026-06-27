@@ -1,19 +1,4 @@
-"""
-protocol.py
-Responsável: PESSOA 2 (Comunicação TCP e protocolo de mensagens)
 
-NOTA: esta é uma versão REDUZIDA, contendo apenas o mínimo necessário
-para peers.py e discovery.py funcionarem: as mensagens de descoberta
-(HELLO/HELLO_ACK) e heartbeat (PING/PONG), além da serialização e do
-framing usados para trocar essas mensagens pela rede.
-
-As mensagens relacionadas a arquivos (FILE_LIST, FILE_REQUEST,
-FILE_DATA, FILE_DELETED) foram removidas daqui e serão adicionadas
-de volta pela Pessoa 2 quando ela começar essa parte do trabalho.
-
-Todas as mensagens são dicionários Python serializados como JSON, sempre
-com um campo "type" indicando o tipo de mensagem.
-"""
 
 import json
 
