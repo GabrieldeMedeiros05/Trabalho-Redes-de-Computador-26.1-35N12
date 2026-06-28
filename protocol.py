@@ -9,6 +9,12 @@ HELLO = "HELLO"                # Anúncio de novo nó (UDP broadcast)
 HELLO_ACK = "HELLO_ACK"        # Resposta ao HELLO (UDP, unicast de volta)
 PING = "PING"                  # Heartbeat para verificar se peer está vivo
 PONG = "PONG"                  # Resposta ao PING
+FILE_LIST_REQUEST = "FILE_LIST_REQUEST"
+FILE_LIST_RESPONSE = "FILE_LIST_RESPONSE"
+FILE_REQUEST = "FILE_REQUEST"
+FILE_DATA = "FILE_DATA"
+FILE_DELETE = "FILE_DELETE"
+ERROR = "ERROR"
 
 
 # ---------------------------------------------------------------------------
@@ -39,6 +45,44 @@ def build_ping(node_id):
 
 def build_pong(node_id):
     return {"type": PONG, "node_id": node_id}
+
+
+def build_file_list_request(node_id):
+    return {"type": FILE_LIST_REQUEST, "node_id": node_id}
+
+
+def build_file_list_response(node_id, files, deleted=None):
+    return {
+        "type": FILE_LIST_RESPONSE,
+        "node_id": node_id,
+        "files": files,
+        "deleted": deleted or {},
+    }
+
+
+def build_file_request(node_id, path):
+    return {"type": FILE_REQUEST, "node_id": node_id, "path": path}
+
+
+def build_file_data(node_id, path, content_base64, metadata):
+    return {
+        "type": FILE_DATA,
+        "node_id": node_id,
+        "path": path,
+        "content_base64": content_base64,
+        "metadata": metadata,
+    }
+
+
+def build_file_delete(node_id, path, deleted_at=None):
+    msg = {"type": FILE_DELETE, "node_id": node_id, "path": path}
+    if deleted_at is not None:
+        msg["deleted_at"] = deleted_at
+    return msg
+
+
+def build_error(node_id, message):
+    return {"type": ERROR, "node_id": node_id, "message": message}
 
 
 # ---------------------------------------------------------------------------

@@ -6,6 +6,7 @@ import os
 import discovery
 import server
 from peers import PeerManager
+from sync import FileSynchronizer
 
 
 def main():
@@ -26,6 +27,11 @@ def main():
     peer_manager = PeerManager(peer_timeout=30)
     peer_manager.start_cleanup_loop(interval=5)
     peer_manager.start_heartbeat_loop(node_id=node_id, interval=10)
+    sync_manager = FileSynchronizer(
+        node_id=node_id,
+        shared_folder=shared_folder,
+        peer_manager=peer_manager,
+    )
 
     # 2. Sobe o servidor TCP (necessário para responder PING/PONG)
     server.start_tcp_server(
@@ -33,6 +39,7 @@ def main():
         tcp_port=tcp_port,
         peer_manager=peer_manager,
         shared_folder=shared_folder,
+        sync_manager=sync_manager,
     )
 
     # 3. Sobe a descoberta de peers via UDP (Pessoa 1)
@@ -41,8 +48,9 @@ def main():
         tcp_port=tcp_port,
         peer_manager=peer_manager,
     )
+    sync_manager.start()
 
-    print(f"[node] Nó {node_id} pronto (versão reduzida: só descoberta + heartbeat).")
+    print(f"[node] Nó {node_id} pronto (descoberta + heartbeat + sincronizacao).")
 
     # Mantém o processo principal vivo (todo o trabalho roda em threads)
     try:

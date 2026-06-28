@@ -12,7 +12,14 @@ BUFFER_SIZE = 4096
 # SERVIDOR (lado que recebe conexões)
 # ---------------------------------------------------------------------------
 
-def start_tcp_server(node_id, tcp_port, peer_manager, shared_folder, on_file_received=None):
+def start_tcp_server(
+    node_id,
+    tcp_port,
+    peer_manager,
+    shared_folder,
+    sync_manager=None,
+    on_file_received=None,
+):
     """
     Sobe o servidor TCP em uma thread separada. Chamado por node.py.
 
@@ -23,14 +30,14 @@ def start_tcp_server(node_id, tcp_port, peer_manager, shared_folder, on_file_rec
     """
     t = threading.Thread(
         target=_server_loop,
-        args=(node_id, tcp_port, peer_manager),
+        args=(node_id, tcp_port, peer_manager, sync_manager),
         daemon=True,
     )
     t.start()
     return t
 
 
-def _server_loop(node_id, tcp_port, peer_manager):
+def _server_loop(node_id, tcp_port, peer_manager, sync_manager):
     server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_sock.bind(("", tcp_port))
@@ -41,13 +48,13 @@ def _server_loop(node_id, tcp_port, peer_manager):
         conn, addr = server_sock.accept()
         client_thread = threading.Thread(
             target=_handle_connection,
-            args=(conn, addr, node_id),
+            args=(conn, addr, node_id, sync_manager),
             daemon=True,
         )
         client_thread.start()
 
 
-def _handle_connection(conn, addr, node_id):
+def _handle_connection(conn, addr, node_id, sync_manager):
     """
     Trata mensagens recebidas em uma conexão TCP. Nesta versão reduzida,
     só sabemos responder a PING (necessário para o heartbeat de peers.py).
@@ -62,6 +69,10 @@ def _handle_connection(conn, addr, node_id):
 
             if msg_type == protocol.PING:
                 _handle_ping(conn, msg, node_id)
+            elif sync_manager is not None:
+                response = sync_manager.handle_message(msg)
+                if response is not None:
+                    conn.sendall(protocol.frame_message(response))
             else:
                 print(f"[server] Tipo de mensagem não tratado nesta versão: {msg_type}")
 
