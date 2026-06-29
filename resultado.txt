@@ -1,0 +1,11 @@
+=== INICIANDO TESTES DO MÓDULO TCP ===
+[server] Servidor TCP rodando na porta 9999
+
+[Teste 1] Testando envio de PING e recebimento de PONG...
+Resposta recebida do servidor: {'type': 'PONG', 'node_id': 'Nó_Teste_Gabriel'}
+-> SUCESSO: O servidor respondeu PONG corretamente!
+
+[Teste 2] Testando comportamento de Timeout no cliente para porta inexistente...
+-> SUCESSO: Timeout do socket funcionando como proteção contra travamento.
+
+=== TESTES CONCLUÍDOS ===
