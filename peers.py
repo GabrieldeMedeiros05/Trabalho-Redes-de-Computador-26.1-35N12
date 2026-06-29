@@ -1,11 +1,3 @@
-"""
-peers.py
-Responsável: Gustavo (Descoberta e gerenciamento de peers)
-
-Mantém a lista de nós conhecidos na rede, junto com informações
-de "última vez visto" (para detectar quedas via heartbeat/PING).
-"""
-
 import time
 import threading
 import socket
