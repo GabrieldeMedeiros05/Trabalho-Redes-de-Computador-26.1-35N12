@@ -58,7 +58,6 @@ def listen_for_discovery(node_id, tcp_port, peer_manager, discovery_port=DISCOVE
             print(f"[discovery] HELLO_ACK recebido de {sender_id}")
 
         # PONG normalmente chega por TCP (ver server.py), não por aqui.
-        # Mas se decidirem fazer heartbeat por UDP também, tratar aqui.
 
 
 def start_discovery(node_id, tcp_port, peer_manager, discovery_port=DISCOVERY_PORT):
